@@ -76,12 +76,8 @@ PLYR_DFLT_G EQU         01          ; Player Default Gravity
 GND_TRUE    EQU         01          ; Player on Ground True
 GND_FALSE   EQU         00          ; Player on Ground False
 
-RUN_INDEX   EQU         00          ; Player Run Sound Index  
-JMP_INDEX   EQU         01          ; Player Jump Sound Index  
-OPPS_INDEX  EQU         02          ; Player Opps Sound Index
-
 ENMY_W_INIT EQU         08          ; Enemy initial Width
-ENMY_H_INIT EQU         08          ; Enemy initial Height
+ENMY_H_INIT EQU         300          ; Enemy initial Height
 
 *-----------------------------------------------------------
 * Section       : Game Stats
@@ -160,8 +156,6 @@ INITIALISE:
 	MOVE.W  #$FF00,     D1          ; Fill Screen Clear
 	TRAP	#15                     ; Trap (Perform action)
 
-
-
 *-----------------------------------------------------------
 * Subroutine    : Game
 * Description   : Game including main GameLoop. GameLoop is like
@@ -175,6 +169,13 @@ GAMELOOP:
     BSR     IS_PLAYER_ON_GND        ; Check if player is on ground
     BSR     CHECK_COLLISIONS        ; Check for Collisions
     BSR     DRAW                    ; Draw the Scene
+    
+    ; Introduce delay to slow down the game
+    MOVE.L  #1000, D0            ; Delay value (adjust as needed)
+DELAY_LOOP:
+    SUBQ.L  #1, D0                  ; Decrement delay counter
+    BNE     DELAY_LOOP              ; Loop until delay counter is zero
+    
     BRA     GAMELOOP                ; Loop back to GameLoop
 
 *-----------------------------------------------------------
@@ -291,127 +292,6 @@ DRAW_PLYR_DATA:
     MOVE.B  #03,        D0          ; Display number at D1.L
     MOVE.L  PLAYER_SCORE,D1         ; Move Score to D1.L
     TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player X Message
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0202,     D1          ; Col 02, Row 02
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     X_MSG,      A1          ; X Message
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player X
-    MOVE.B  #TC_CURSR_P, D0          ; Set Cursor Position
-    MOVE.W  #$0502,     D1          ; Col 05, Row 02
-    TRAP    #15                     ; Trap (Perform action)
-    MOVE.B  #03,        D0          ; Display number at D1.L
-    MOVE.L  PLAYER_X,   D1          ; Move X to D1.L
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player Y Message
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$1002,     D1          ; Col 10, Row 02
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     Y_MSG,      A1          ; Y Message
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player Y
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$1202,     D1          ; Col 12, Row 02
-    TRAP    #15                     ; Trap (Perform action)
-    MOVE.B  #03,        D0          ; Display number at D1.L
-    MOVE.L  PLAYER_Y,   D1          ; Move X to D1.L
-    TRAP    #15                     ; Trap (Perform action) 
-
-    ; Player Velocity Message
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0203,     D1          ; Col 02, Row 03
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     V_MSG,      A1          ; Velocity Message
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player Velocity
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0503,     D1          ; Col 05, Row 03
-    TRAP    #15                     ; Trap (Perform action)
-    MOVE.B  #03,        D0          ; Display number at D1.L
-    MOVE.L  PLYR_VELOCITY,D1        ; Move X to D1.L
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player Gravity Message
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$1003,     D1          ; Col 10, Row 03
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     G_MSG,      A1          ; G Message
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player Gravity
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$1203,     D1          ; Col 12, Row 03
-    TRAP    #15                     ; Trap (Perform action)
-    MOVE.B  #03,        D0          ; Display number at D1.L
-    MOVE.L  PLYR_GRAVITY,D1         ; Move Gravity to D1.L
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Player On Ground Message
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0204,     D1          ; Col 10, Row 03
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     GND_MSG,    A1          ; On Ground Message
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-    
-    ; Player On Ground
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0604,     D1          ; Col 06, Row 04
-    TRAP    #15                     ; Trap (Perform action)
-    MOVE.B  #03,        D0          ; Display number at D1.L
-    MOVE.L  PLYR_ON_GND,D1          ; Move Play on Ground ? to D1.L
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Show Keys Pressed
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$2001,     D1          ; Col 20, Row 1
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     KEYCODE_MSG, A1         ; Keycode
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Show KeyCode
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$3001,     D1          ; Col 30, Row 1
-    TRAP    #15                     ; Trap (Perform action)    
-    MOVE.L  CURRENT_KEY,D1          ; Move Key Pressed to D1
-    MOVE.B  #03,        D0          ; Display the contents of D1
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Show if Update is Running
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0205,     D1          ; Col 02, Row 05
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     UPDATE_MSG, A1          ; Update
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Show if Draw is Running
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0206,     D1          ; Col 02, Row 06
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     DRAW_MSG,   A1          ; Draw
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-
-    ; Show if Idle is Running
-    MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
-    MOVE.W  #$0207,     D1          ; Col 02, Row 07
-    TRAP    #15                     ; Trap (Perform action)
-    LEA     IDLE_MSG,   A1          ; Move Idle Message to A1
-    MOVE    #13,        D0          ; No Line feed
-    TRAP    #15                     ; Trap (Perform action)
-
     RTS  
     
 *-----------------------------------------------------------
@@ -480,7 +360,7 @@ IDLE:
 *-----------------------------------------------------------
 DRAW_PLAYER:
     ; Set Pixel Colors
-    MOVE.L  #WHITE,     D1          ; Set Background color
+    MOVE.L  #GREEN,     D1          ; Set Background color
     MOVE.B  #80,        D0          ; Task for Background Color
     TRAP    #15                     ; Trap (Perform action)
 
@@ -567,7 +447,9 @@ COLLISION_CHECK_DONE:               ; No Collision Update points
 
 COLLISION:
     MOVE.L  #00, PLAYER_SCORE       ; Reset Player Score
-    RTS                             ; Return to subroutine
+
+    SIMHALT                         ; Stop the game
+    
 
 *-----------------------------------------------------------
 * Subroutine    : EXIT
@@ -578,7 +460,6 @@ EXIT:
     MOVE.B  #TC_CURSR_P,D0          ; Set Cursor Position
     MOVE.W  #$4004,     D1          ; Col 40, Row 1
     TRAP    #15                     ; Trap (Perform action)
-    LEA     EXIT_MSG,   A1          ; Exit
     MOVE    #13,        D0          ; No Line feed
     TRAP    #15                     ; Trap (Perform action)
     MOVE.B  #TC_EXIT,   D0          ; Exit Code
@@ -590,37 +471,25 @@ EXIT:
 * Description   : Messages to Print on Console, names should be
 * self documenting
 *-----------------------------------------------------------
-WELCOME_MESSAGE_WIDTH       DC.W            100						; X position
-WELCOME_MESSAGE_HEIGHT	     DC.W            180						; Y position
-WELCOME_MESSAGE_1		     DC.B	          'Welcome to Endless Runner!',0				
+WELCOME_MESSAGE_WIDTH        DC.W            100    ; X position
+WELCOME_MESSAGE_HEIGHT	     DC.W            180	; Y position
+WELCOME_MESSAGE_1		     DC.B	         'Welcome to Endless Runner!',0				
 WELCOME_MESSAGE_2		     DC.B            'The goal of this game is to jump over obstacles.',0			
 WELCOME_MESSAGE_3		     DC.B            'Controls:',0										
 WELCOME_MESSAGE_4		     DC.B            '"Space" to jump',0		
-WELCOME_MESSAGE_5           DC.B            'Press "Enter" to start!',0	
+WELCOME_MESSAGE_5            DC.B            'Press "Enter" to start!',0	
 SIMHALT
 
-SCORE_MSG       DC.B    'Score: ', 0       ; Score Message
-KEYCODE_MSG     DC.B    'KeyCode: ', 0     ; Keycode Message
-JUMP_MSG        DC.B    'Jump...', 0       ; Jump Message
-
-IDLE_MSG        DC.B    'Idle...', 0       ; Idle Message
-UPDATE_MSG      DC.B    'Update...', 0     ; Update Message
-DRAW_MSG        DC.B    'Draw...', 0       ; Draw Message
-
-X_MSG           DC.B    'X: ', 0             ; X Position Message
-Y_MSG           DC.B    'Y: ', 0             ; Y Position Message
-V_MSG           DC.B    'V: ',  0             ; Velocity Position Message
-G_MSG           DC.B    'G: ', 0             ; Gravity Position Message
-GND_MSG         DC.B    'GND: ', 0           ; On Ground Position Message
-
-EXIT_MSG        DC.B    'Exiting...', 0    ; Exit Message
+SCORE_MSG                    DC.B    'Score: ', 0       ; Score Message
 
 *-----------------------------------------------------------
 * Section       : Graphic Colors
 * Description   : Screen Pixel Color
 *-----------------------------------------------------------
 WHITE           EQU     $00FFFFFF
-RED             EQU     $000000FF   
+RED             EQU     $000000FF
+GREEN           EQU     $0000FF00
+BLUE            EQU     $00FF0000   
 
 *-----------------------------------------------------------
 * Section       : Screen Size
@@ -651,6 +520,7 @@ ENEMY_X         DS.L    01  ; Reserve Space for Enemy X Position
 ENEMY_Y         DS.L    01  ; Reserve Space for Enemy Y Position
 
     END    START        ; last line of source
+
 *~Font name~Courier New~
 *~Font size~14~
 *~Tab type~1~
