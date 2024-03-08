@@ -4,49 +4,49 @@
 * Date       : 08/03/2024
 * Description: The goal is to jump over obstacles
 *-----------------------------------------------------------
-    ORG    $1000
-START:                  ; first instruction of program
+
+    ORG    $1000                ; Origin address of the program
+START:                          ; Label for the beginning of the program
 
 *-----------------------------------------------------------
 * Section       : Welcome Screen
 * Description   : The first screen the player sees
 *-----------------------------------------------------------
 WELCOME_SCREEN:
-     MOVE.W			 WELCOME_MESSAGE_WIDTH,     D1				    ; Start screen text x position
-     MOVE.W			 WELCOME_MESSAGE_HEIGHT,     D2				    ; Start screen text y position
-     ADD.W			 #95,           D0			        ; Move string in X 
-     ADD.W          #120,          D1		
-     LEA			 WELCOME_MESSAGE_1,      A1
-     TRAP			 #15						        ; Draw
+     MOVE.W          WELCOME_MESSAGE_WIDTH,  D1   ; Start screen text x position
+     MOVE.W          WELCOME_MESSAGE_HEIGHT, D2   ; Start screen text y position
+     ADD.W           #95,                    D0   ; Move string in X 
+     ADD.W           #120,                   D1   ; Move string in Y
+     LEA             WELCOME_MESSAGE_1,      A1   ; Load address of welcome message 1
+     TRAP            #15                          ; Draw
      
-     MOVE.W          WELCOME_MESSAGE_WIDTH,     D1
-     ADD.W           #108,          D1                  ; Move position right
-     ADD.W           #16,           D2                  ; Move position down 
-     LEA             WELCOME_MESSAGE_2,          A1  
-     TRAP            #15                                ; Draw
+     MOVE.W          WELCOME_MESSAGE_WIDTH,  D1   ; Move to next line
+     ADD.W           #108,                   D1   ; Move position right
+     ADD.W           #16,                    D2   ; Move position down 
+     LEA             WELCOME_MESSAGE_2,      A1   ; Load address of welcome message 2
+     TRAP            #15                          ; Draw
      
-     MOVE.W          WELCOME_MESSAGE_WIDTH,     D1	
-     ADD.W           #170,          D1                  ; Move position right 
-     ADD.W           #32,           D2					; Move position down 
-     LEA			     WELCOME_MESSAGE_3,      A1
-     TRAP			 #15						        ; Draw
+     MOVE.W          WELCOME_MESSAGE_WIDTH,  D1   ; Move to next line
+     ADD.W           #170,                   D1   ; Move position right 
+     ADD.W           #32,                    D2   ; Move position down 
+     LEA             WELCOME_MESSAGE_3,      A1   ; Load address of welcome message 3
+     TRAP            #15                          ; Draw
      
-     MOVE.W          WELCOME_MESSAGE_WIDTH,     D1	
-     ADD.W           #130,          D1
-     ADD.W           #16,           D2					; Move position down
-     LEA			     WELCOME_MESSAGE_4,      A1
-     TRAP			 #15						        ; Draw
+     MOVE.W          WELCOME_MESSAGE_WIDTH,  D1   ; Move to next line
+     ADD.W           #130,                   D1   ; Move position right
+     ADD.W           #16,                    D2   ; Move position down
+     LEA             WELCOME_MESSAGE_4,      A1   ; Load address of welcome message 4
+     TRAP            #15                          ; Draw
      
-     MOVE.W          WELCOME_MESSAGE_WIDTH,     D1
-     ADD.W           #155,          D1                  ; Move position right
-     ADD.W           #32,           D2					; Move position down
-     LEA			     WELCOME_MESSAGE_5,      A1
-     TRAP			 #15						        ; Draw
+     MOVE.W          WELCOME_MESSAGE_WIDTH,  D1   ; Move to next line
+     ADD.W           #155,                   D1   ; Move position right
+     ADD.W           #32,                    D2   ; Move position down
+     LEA             WELCOME_MESSAGE_5,      A1   ; Load address of welcome message 5
+     TRAP            #15                          ; Draw
      
-     TRAP			 #15						        ; Draw
-     
-     MOVE            #5,            D0					; Input from user
-     TRAP            #15
+     TRAP            #15                          ; Draw
+     MOVE            #5,                     D0   ; Input from user
+     TRAP            #15                          ; Trap for input
 
 *-----------------------------------------------------------
 * Section       : Trap Codes
@@ -59,11 +59,10 @@ TC_S_SIZE   EQU         00          ; Places 0 in D1.L to retrieve Screen width 
 TC_KEYCODE  EQU         19          ; Check for pressed keys
 TC_DBL_BUF  EQU         92          ; Double Buffer Screen Trap Code
 TC_CURSR_P  EQU         11          ; Trap code cursor position
-
 TC_EXIT     EQU         09          ; Exit Trapcode
 
 *-----------------------------------------------------------
-* Section       : Charater Setup
+* Section       : Character Setup
 * Description   : Size of Player and Enemy and properties
 * of these characters e.g Starting Positions and Sizes
 *-----------------------------------------------------------
